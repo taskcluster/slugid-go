@@ -80,9 +80,14 @@ func Encode(uuid_ uuid.UUID) string {
 	return base64.URLEncoding.EncodeToString(uuid_)[:22] // Drop '==' padding
 }
 
-// Returns the uuid.UUID object represented by the given v4 or "nice" slug
-func Decode(slug string) (uuid.UUID, error) {
-	return base64.URLEncoding.DecodeString(slug + "==") // b64 padding
+// Returns the uuid.UUID object represented by the given v4 or "nice" slug, or
+// nil if it cannot be decoded
+func Decode(slug string) uuid.UUID {
+	uuid_, err := base64.URLEncoding.DecodeString(slug + "==") // b64 padding
+	if err != nil {
+		return nil
+	}
+	return uuid_
 }
 
 // Returns a randomly generated uuid v4 compliant slug
