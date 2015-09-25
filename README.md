@@ -7,9 +7,12 @@ slugid-go - Compressed UUIDs for python
 [![Coverage Status](https://coveralls.io/repos/taskcluster/slugid-go/badge.svg?branch=master&service=github)](https://coveralls.io/github/taskcluster/slugid-go?branch=master)
 [![License](https://img.shields.io/badge/license-MPL%202.0-orange.svg)](https://github.com/taskcluster/slugid-go/blob/master/LICENSE)
 
-A go (golang) module for generating v4 UUIDs and encoding them into 22
+slugid-go provides:
+
+* A go (golang) module for generating v4 UUIDs and encoding them into 22
 character URL-safe base64 slug representation (see [RFC 4648 sec.
 5](http://tools.ietf.org/html/rfc4648#section-5)).
+* A command line tool to provides the same functions
 
 Slugs are url-safe base64 encoded v4 uuids, stripped of base64 `=` padding.
 
@@ -52,8 +55,8 @@ provide 128 - 6 = 122 bits entropy. Due to the (un)setting of the first bit
 of "nice" slugs, nice slugs provide therefore 121 bits entropy.
 
 
-Usage
------
+Go library usage
+----------------
 
 ```go
 import "github.com/taskcluster/slugid-go/slugid"
@@ -71,6 +74,108 @@ uuid := slugid.Decode(slug)
 
 // Get slug from [UUID](https://godoc.org/code.google.com/p/go-uuid/uuid#UUID)
 slug := slugid.Encode(uuid)
+```
+
+Command line usage
+------------------
+
+To install:
+
+```
+go get github.com/taskcluster/slug-go/slug
+```
+
+To use:
+
+
+```
+Usage:
+  slug [-n|--nice|-r|--v4] [COUNT]
+  slug encode [UUID...|-]
+  slug decode [SLUGID...|-]
+  slug -h|--help
+  slug -v|--version
+
+  slug [-n|--nice|-r|--v4] [COUNT]  Generates new slug(s). If -r or --v4 is
+                                    provided, regular v4 UUID are used for
+                                    generating the slug(s). In all other cases
+                                    (-n, --nice, or *no* option) "nice" slugs
+                                    are generated. COUNT specifies how many
+                                    slugs to generate, default is one. Slugs
+                                    are output on separate lines.
+
+  slug decode (-|[SLUGID...])       Outputs the v4 UUID(s) represented by the
+                                    given SLUGID(s), or slugid(s) passed via
+                                    standard in (one per line) if '-' is
+                                    provided. UUID(s) are output one per line,
+                                    in the order they were specified. If no
+                                    slugids are provided as command line options
+                                    or via '-' option, slug generates no output
+                                    and exits successfully.
+
+  slug encode (-|[UUID...])         Outputs the SLUGID(s) represented by the
+                                    given UUID(s), or UUID(s) passed via
+                                    standard in (one per line) if '-' is
+                                    provided. SLUGIDs are output one per line,
+                                    in the order they were specified. If no
+                                    UUIDs are provided as command line options
+                                    or via '-' option, slug generates no output
+                                    and exits successfully.
+
+  slug -h|--help                    Displays this help page.
+
+  slug -v|--version                 Displays the version of the slug command
+                                    line tool.
+
+
+Return Codes:
+
+   0: Success
+   1: Unrecognised command line options
+  64: Cannot decode invalid slug into a UUID
+  65: Problem reading standard input during slug decoding
+  66: Cannot encode invalid uuid into a slug
+  67: Problem reading standard input during slug encoding
+  68: Invalid value passed in for command line option COUNT
+```
+
+_Examples_
+
+```
+  $ slug 10
+  RDBdHcXuTUq5ghG1wMTArQ
+  BwwjV68MS3aQpkJynFZg9w
+  QjbIAaOlSK-in5Hveh0T4w
+  YGw68ONSR76wruU85RnvjA
+  M0eS8zm5RE2qKKURM_1q9g
+  ET23t51DSS2c57PA24QQGg
+  cu9mg-T6Rem9LuXBdHd9Ig
+  OxghknAoS9ORYPocd9HFUg
+  Yg6Yei4QQl-iqdZ3udJlLw
+  Ek924JDBRGeA6t6PiNz6UQ
+
+  $ slug --v4 2
+  -0eS8zm5RE2qKKURM_1q9g
+  OxghknAoS9ORYPocd9HFUg
+
+  $ slug decode OxghknAoS9ORYPocd9HFUg SJZbHUBSQLaichv2auLqGQ EChNNJAyS0SeUMlRWCnJ1A
+  3b182192-7028-4bd3-9160-fa1c77d1c552
+  48965b1d-4052-40b6-a272-1bf66ae2ea19
+  10284d34-9032-4b44-9e50-c9515829c9d4
+
+  $ echo 'f47ac10b-58cc-4372-a567-0e02b2c3d479 81d6bb7e-985c-409b-af6c-4721b4a38ec6' \
+              | tr ' ' '\n' | slug encode -
+  9HrBC1jMQ3KlZw4CssPUeQ
+  gda7fphcQJuvbEchtKOOxg
+
+  $ slug 5 | slug decode -
+  3405ed8e-e39f-4a3c-a0ea-e107950757f5
+  1df41b41-18a2-4d85-bdde-8a73f02a5014
+  5fe568dd-6bfd-4f58-8740-17bea665c2ac
+  2464a287-7f82-42ad-9b7d-1e26639d569a
+  1c936d1b-104c-4abf-97b4-f586371e8742
+
+  $ slug 5 | slug decode | slug encode
 ```
 
 RNG Characteristics
