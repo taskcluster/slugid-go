@@ -177,6 +177,11 @@ _Examples_
   1c936d1b-104c-4abf-97b4-f586371e8742
 
   $ slug 5 | slug decode | slug encode
+  WLjW7XpJQ5ePycx6zWF8mw
+  dEOJgGpARrWBm9HX9MPBSA
+  fBIwjdHdRyGIk5WITyqxqA
+  bYuEpq-SQSaZimBDmTe4Kg
+  LLY3KZ05QWm0cBS4rfdTaQ
 ```
 
 RNG Characteristics
