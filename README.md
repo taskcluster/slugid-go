@@ -85,7 +85,7 @@ To install:
 go get github.com/taskcluster/slug-go/slug
 ```
 
-This will create the "slug" command line client. To use, make sure
+This will create the `slug` executable on your system. To use, make sure
 `${GOPATH}/bin` is in your path, and run `slug --help`:
 
 
