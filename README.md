@@ -140,7 +140,7 @@ Return Codes:
   68: Invalid value passed in for command line option COUNT
 ```
 
-_Examples_
+__Examples__
 
 ```
   $ slug 10
