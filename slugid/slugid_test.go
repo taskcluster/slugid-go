@@ -7,6 +7,9 @@ import (
 	"code.google.com/p/go-uuid/uuid"
 	"fmt"
 	"github.com/taskcluster/slugid-go/slugid"
+	"reflect"
+	"runtime"
+	"sort"
 	"testing"
 )
 
@@ -131,10 +134,7 @@ func TestSpreadNice(t *testing.T) {
 	// 0, 16, 32, 48: 0bxx0000
 	charsF := "AQgw"
 	expected := []string{charsC, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF}
-	expectedRange, actualRange := spreadTest(slugid.Nice, expected)
-	if expectedRange != actualRange {
-		t.Errorf("In a large sample of generated nice slugids, the range of characters found per character position in the sample did not match expected results.\n\nExpected: %s\n\nActual: %s", expectedRange, actualRange)
-	}
+	spreadTest(t, slugid.Nice, expected)
 }
 
 // This test is the same as niceSpreadTest but for slugid.V4() rather than
@@ -150,10 +150,7 @@ func TestSpreadV4(t *testing.T) {
 	// 0, 16, 32, 48: 0bxx0000
 	charsF := "AQgw"
 	expected := []string{charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsD, charsAll, charsE, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsAll, charsF}
-	expectedRange, actualRange := spreadTest(slugid.V4, expected)
-	if expectedRange != actualRange {
-		t.Errorf("In a large sample of generated v4 slugids, the range of characters found per character position in the sample did not match expected results.\n\nExpected: %s\n\nActual: %s", expectedRange, actualRange)
-	}
+	spreadTest(t, slugid.V4, expected)
 }
 
 // `spreadTest` runs a test against the `generator` function, to check that
@@ -162,43 +159,65 @@ func TestSpreadV4(t *testing.T) {
 // string of all possible characters that should appear in that position in the
 // string, at least once in the sample of 64*40 responses from the `generator`
 // function
-func spreadTest(generator func() string, expected []string) (string, string) {
+func spreadTest(t *testing.T, generator func() string, expected []string) {
+
 	// k is an array which stores which characters were found at which
 	// positions. It has one entry per slugid character, therefore 22 entries.
-	// Each entry is a dict with a key for each character found, and its value
+	// Each entry is a map with a key for each character found, and its value
 	// as the number of times that character appeared at that position in the
 	// slugid in the large sample of slugids generated in this test.
-
-	// k = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+	var k [22]map[rune]int
+	for i := 0; i < 22; i++ {
+		k[i] = make(map[rune]int)
+	}
 
 	// Generate a large sample of slugids, and record what characters appeared
 	// where...  A monte-carlo test has demonstrated that with 64 * 20
 	// iterations, no failure occurred in 1000 simulations, so 64 * 40 should be
 	// suitably large to rule out false positives.
+	for i := 0; i < 64*40; i++ {
+		slug := generator()
+		if len(slug) != 22 {
+			t.Fatalf("Generated slug '%s' does not have 22 characters", slug)
+		}
+		for j, char := range slug {
+			k[j][char] = k[j][char] + 1
+		}
+	}
 
-	//     for i in range(0, 64 * 40):
-	//         slug = generator()
-	//         assert len(slug) == 22
-	//         for j in range(0, 22):
-	//             if slug[j] in k[j]:
-	//                 k[j][slug[j]] = k[j][slug[j]] + 1
-	//             else:
-	//                 k[j][slug[j]] = 1
-	//
-	//     # Compose results into an array `actual`, for comparison with `expected`
-	//     actual = []
-	//     for j in range(0, len(k)):
-	//         actual.append('')
-	//         for a in k[j].keys():
-	//             if k[j][a] > 0:
-	//                 actual[j] += a
-	//         # sort for easy comparison
-	//         actual[j] = ''.join(sorted(actual[j]))
-	//
-	//     assert arraysEqual(expected, actual), "In a large sample of generated slugids, the range of characters found per character position in the sample did not match expected results.\n\nExpected: " + str(expected) + "\n\nActual: " + str(actual)
-	return "", ""
+	// Compose results into an array `actual`, for comparison with `expected`
+	var actual [22][]int
+	actualRange := ""
+	for j := 0; j < 22; j++ {
+		actual[j] = make([]int, 0)
+		for a, _ := range k[j] {
+			actual[j] = append(actual[j], int(a))
+		}
+		sort.Ints(actual[j])
+		for _, c := range actual[j] {
+			actualRange += string(c)
+		}
+		actualRange += "\n"
+	}
+
+	expectedRange := ""
+	for _, s := range expected {
+		bytes := []byte(s)
+		chars := make([]int, 0)
+		for _, a := range bytes {
+			chars = append(chars, int(a))
+		}
+		sort.Ints(chars)
+		for _, c := range chars {
+			expectedRange += string(c)
+		}
+		expectedRange += "\n"
+	}
+	if expectedRange != actualRange {
+		t.Errorf("In a large sample of generated slugids (using function %s), the range of characters found per character position in the sample did not match expected results.\n\nExpected: \n%s\n\nActual: \n%s", functionName(generator), expectedRange, actualRange)
+	}
 }
 
-// def arraysEqual(a, b):
-//     """ returns True if arrays a and b are equal"""
-//     return cmp(a, b) == 0
+func functionName(i interface{}) string {
+	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+}
