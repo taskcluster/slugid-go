@@ -157,7 +157,7 @@ func main() {
 	if c := arguments["COUNT"]; c != nil {
 		if c == "encode" || c == "decode" {
 			arguments[c.(string)] = true
-			c = nil
+			arguments["COUNT"] = nil
 		}
 	}
 
