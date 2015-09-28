@@ -221,3 +221,10 @@ func spreadTest(t *testing.T, generator func() string, expected []string) {
 func functionName(i interface{}) string {
 	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
 }
+
+func TestDecodeInvalidSlug(t *testing.T) {
+	uuid_ := slugid.Decode("not really a slug")
+	if uuid_ != nil {
+		t.Errorf("Decoding an invalid slug should return nil, but returned %s.", uuid_)
+	}
+}
