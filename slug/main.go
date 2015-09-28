@@ -87,7 +87,7 @@ All "nice" slugs are also "v4" slugs, since they comprise a strict subset.
 
 
 
-Return Codes:
+Exit Codes:
 
    0: Success
    1: Unrecognised command line options

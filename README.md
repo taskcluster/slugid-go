@@ -1,5 +1,5 @@
-slugid-go - Compressed UUIDs for python
-=======================================
+slugid-go - Compressed UUIDs for go (golang)
+============================================
 
 <img src="https://tools.taskcluster.net/lib/assets/taskcluster-120.png" />
 
@@ -129,7 +129,7 @@ Usage:
                                     line tool.
 
 
-Return Codes:
+Exit Codes:
 
    0: Success
    1: Unrecognised command line options
