@@ -76,17 +76,29 @@ uuid := slugid.Decode(slug)
 slug := slugid.Encode(uuid)
 ```
 
-Command line usage
-------------------
+Installing command line tool
+----------------------------
 
-To install:
+__Binary installation__
+
+Download the slug command line tool for your platform from
+[here](https://github.com/taskcluster/slugid-go/releases).
+
+__Source installation__
+
+Requirements:
+
+  * go (golang) v1.4 or higher
+  * `${GOPATH}/bin` is in your path
+
+Run:
 
 ```
 go get github.com/taskcluster/slug-go/slug
 ```
 
-This will create the `slug` executable on your system. To use, make sure
-`${GOPATH}/bin` is in your path, and run `slug --help`:
+Command line usage
+------------------
 
 
 ```
