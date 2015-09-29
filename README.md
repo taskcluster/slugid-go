@@ -94,7 +94,7 @@ Requirements:
 Run:
 
 ```
-go get github.com/taskcluster/slug-go/slug
+go get github.com/taskcluster/slugid-go
 ```
 
 Command line usage
