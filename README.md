@@ -215,8 +215,8 @@ The slugid library inherits these RNG characteristics.
 
 License
 -------
-The `slugid` library is released on the MPL 2.0 license, see the `LICENSE`
-for complete license.
+The `slugid` library is released on the MPL 2.0 license, see file `LICENSE`
+for the complete license.
 
 Testing
 -------
