@@ -70,9 +70,11 @@ slug := slugid.Nice()  // a8_YezW8T7e1jLxG7evy-A
 // Alternative, if slugs will not be used as command line parameters
 slug := slugid.V4()    // -9OpXaCORAaFh4sJRk7PUA
 
+// TODO Fix when godoc is back up
 // Get [UUID](https://godoc.org/code.google.com/p/go-uuid/uuid#UUID) from slug
 uuid := slugid.Decode(slug)
 
+// TODO Fix when godoc is back up
 // Get slug from [UUID](https://godoc.org/code.google.com/p/go-uuid/uuid#UUID)
 slug := slugid.Encode(uuid)
 ```
@@ -200,6 +202,7 @@ __Examples__
 RNG Characteristics
 -------------------
 UUID generation is performed by the
+// TODO fix when go doc up
 [code.google.com/p/go-uuid/uuid](https://godoc.org/code.google.com/p/go-uuid/uuid)
 library which in turn uses the
 [crypto/rand](https://golang.org/pkg/crypto/rand/#pkg-variables) standard
