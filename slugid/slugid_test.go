@@ -4,13 +4,14 @@
 package slugid_test
 
 import (
-	"code.google.com/p/go-uuid/uuid"
 	"fmt"
-	"github.com/taskcluster/slugid-go/slugid"
 	"reflect"
 	"runtime"
 	"sort"
 	"testing"
+
+	"github.com/pborman/uuid"
+	"github.com/taskcluster/slugid-go/slugid"
 )
 
 func ExampleNice() {

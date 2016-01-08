@@ -70,8 +70,9 @@
 package slugid
 
 import (
-	"code.google.com/p/go-uuid/uuid"
 	"encoding/base64"
+
+	"github.com/pborman/uuid"
 )
 
 // Returns the given uuid.UUID object as a 22 character slug. This can be a

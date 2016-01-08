@@ -2,12 +2,13 @@ package main
 
 import (
 	"bufio"
-	"code.google.com/p/go-uuid/uuid"
 	"fmt"
-	docopt "github.com/docopt/docopt-go"
-	"github.com/taskcluster/slugid-go/slugid"
 	"os"
 	"strconv"
+
+	docopt "github.com/docopt/docopt-go"
+	"github.com/pborman/uuid"
+	"github.com/taskcluster/slugid-go/slugid"
 )
 
 var (

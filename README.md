@@ -70,10 +70,10 @@ slug := slugid.Nice()  // a8_YezW8T7e1jLxG7evy-A
 // Alternative, if slugs will not be used as command line parameters
 slug := slugid.V4()    // -9OpXaCORAaFh4sJRk7PUA
 
-// Get [UUID](https://godoc.org/code.google.com/p/go-uuid/uuid#UUID) from slug
+// Get [UUID](https://godoc.org/github.com/pborman/uuid#UUID) from slug
 uuid := slugid.Decode(slug)
 
-// Get slug from [UUID](https://godoc.org/code.google.com/p/go-uuid/uuid#UUID)
+// Get slug from [UUID](https://godoc.org/github.com/pborman/uuid#UUID)
 slug := slugid.Encode(uuid)
 ```
 
@@ -200,7 +200,7 @@ __Examples__
 RNG Characteristics
 -------------------
 UUID generation is performed by the
-[code.google.com/p/go-uuid/uuid](https://godoc.org/code.google.com/p/go-uuid/uuid)
+[github.com/pborman/uuid](https://godoc.org/github.com/pborman/uuid)
 library which in turn uses the
 [crypto/rand](https://golang.org/pkg/crypto/rand/#pkg-variables) standard
 library for generating entropy. This library declares:
