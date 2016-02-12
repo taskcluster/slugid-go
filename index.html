@@ -20,11 +20,12 @@
 
     <section class="main-content">
       <h1>
-<a id="slugid-go---compressed-uuids-for-go-golang" class="anchor" href="#slugid-go---compressed-uuids-for-go-golang" aria-hidden="true"><span class="octicon octicon-link"></span></a>slugid-go - Compressed UUIDs for go (golang)</h1>
+<a id="slugid-go---compressed-uuids-for-go-golang" class="anchor" href="#slugid-go---compressed-uuids-for-go-golang" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>slugid-go - Compressed UUIDs for go (golang)</h1>
 
 <p><img src="https://tools.taskcluster.net/lib/assets/taskcluster-120.png"></p>
 
-<p><a href="http://travis-ci.org/taskcluster/slugid-go"><img src="https://travis-ci.org/taskcluster/slugid-go.svg?branch=master" alt="Build Status"></a>
+<p><a href="https://godoc.org/github.com/taskcluster/slugid-go"><img src="https://godoc.org/github.com/taskcluster/slugid-go?status.svg" alt="GoDoc"></a>
+<a href="http://travis-ci.org/taskcluster/slugid-go"><img src="https://travis-ci.org/taskcluster/slugid-go.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/taskcluster/slugid-go?branch=master"><img src="https://coveralls.io/repos/taskcluster/slugid-go/badge.svg?branch=master&amp;service=github" alt="Coverage Status"></a>
 <a href="https://github.com/taskcluster/slugid-go/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MPL%202.0-orange.svg" alt="License"></a></p>
 
@@ -80,8 +81,170 @@ since this would arise only as an intermittent issue (one time in 64).</p>
 provide 128 - 6 = 122 bits entropy. Due to the (un)setting of the first bit
 of "nice" slugs, nice slugs provide therefore 121 bits entropy.</p>
 
+<p>These are the fixed six bits:</p>
+
+<ul>
+<li>bit 48: <code>0</code>
+</li>
+<li>bit 49: <code>1</code>
+</li>
+<li>bit 50: <code>0</code>
+</li>
+<li>bit 51: <code>0</code>
+</li>
+<li>bit 64: <code>1</code>
+</li>
+<li>bit 65: <code>0</code>
+</li>
+</ul>
+
+<p>Splitting the 128 bits into groups of six to see the base64 character boundaries, we get:</p>
+
+<pre><code>position:                                                                                                                 11 111111 111111 111111 111111 11
+                 11 111111 112222 222222 333333 333344 444444 445555 555555 666666 666677 777777 778888 888888 999999 999900 000000 001111 111111 222222 22
+      012345 678901 234567 890123 456789 012345 678901 234567 890123 456789 012345 678901 234567 890123 456789 012345 678901 234567 890123 456789 012345 67
+bin: |......|......|......|......|......|......|......|......|0100..|......|....10|......|......|......|......|......|......|......|......|......|......|..0000|
+b64: |   α  |   α  |   α  |   α  |   α  |   α  |   α  |   α  |   β  |   α  |   γ  |   α  |   α  |   α  |   α  |   α  |   α  |   α  |   α  |   α  |   α  |   δ  |
+</code></pre>
+
+<p>Using the base64url encoding scheme, we can see which characters are allowed at each of the 22 positions.</p>
+
+<p>⇒</p>
+
+<ul>
+<li>α = <code>0b......</code> ∈ {</li>
+</ul>
+
+<pre><code>000000 A
+000001 B
+000010 C
+000011 D
+000100 E
+000101 F
+000110 G
+000111 H
+001000 I
+001001 J
+001010 K
+001011 L
+001100 M
+001101 N
+001110 O
+001111 P
+010000 Q
+010001 R
+010010 S
+010011 T
+010100 U
+010101 V
+010110 W
+010111 X
+011000 Y
+011001 Z
+011010 a
+011011 b
+011100 c
+011101 d
+011110 e
+011111 f
+100000 g
+100001 h
+100010 i
+100011 j
+100100 k
+100101 l
+100110 m
+100111 n
+101000 o
+101001 p
+101010 q
+101011 r
+101100 s
+101101 t
+101110 u
+101111 v
+110000 w
+110001 x
+110010 y
+110011 z
+110100 0
+110101 1
+110110 2
+110111 3
+111000 4
+111001 5
+111010 6
+111011 7
+111100 8
+111101 9
+111110 -
+111111 _
+</code></pre>
+
+<p>}</p>
+
+<ul>
+<li>β = <code>0b0100..</code> ∈ {</li>
+</ul>
+
+<pre><code>010000 Q
+010001 R
+010010 S
+010011 T
+</code></pre>
+
+<p>}</p>
+
+<ul>
+<li>γ = <code>0b....10</code> ∈ {</li>
+</ul>
+
+<pre><code>000010 C
+000110 G
+001010 K
+001110 O
+010010 S
+010110 W
+011010 a
+011110 e
+100010 i
+100110 m
+101010 q
+101110 u
+110010 y
+110110 2
+111010 6
+111110 -
+</code></pre>
+
+<p>}</p>
+
+<ul>
+<li>δ = <code>0b..0000</code> ∈ {</li>
+</ul>
+
+<pre><code>000000 A
+010000 Q
+100000 g
+110000 w
+</code></pre>
+
+<p>}</p>
+
+<p>Thus we reach a 22 character encoding of:</p>
+
+<ul>
+<li>α{8}βαγα{10}δ</li>
+</ul>
+
+<p>which denormalised becomes:</p>
+
+<ul>
+<li><code>^[A-Za-z0-9_-]{8}[Q-T][A-Za-z0-9_-][CGKOSWaeimquy26-][A-Za-z0-9_-]{10}[AQgw]$</code></li>
+</ul>
+
 <h2>
-<a id="go-library-usage" class="anchor" href="#go-library-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Go library usage</h2>
+<a id="go-library-usage" class="anchor" href="#go-library-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Go library usage</h2>
 
 <div class="highlight highlight-source-go"><pre><span class="pl-k">import</span> <span class="pl-s"><span class="pl-pds">"</span>github.com/taskcluster/slugid-go/slugid<span class="pl-pds">"</span></span>
 
@@ -93,14 +256,14 @@ of "nice" slugs, nice slugs provide therefore 121 bits entropy.</p>
 <span class="pl-c">// Alternative, if slugs will not be used as command line parameters</span>
 <span class="pl-smi">slug</span> <span class="pl-k">:=</span> slugid.<span class="pl-c1">V4</span>()    <span class="pl-c">// -9OpXaCORAaFh4sJRk7PUA</span>
 
-<span class="pl-c">// Get [UUID](https://godoc.org/code.google.com/p/go-uuid/uuid#UUID) from slug</span>
+<span class="pl-c">// Get [UUID](https://godoc.org/github.com/pborman/uuid#UUID) from slug</span>
 <span class="pl-smi">uuid</span> <span class="pl-k">:=</span> slugid.<span class="pl-c1">Decode</span>(slug)
 
-<span class="pl-c">// Get slug from [UUID](https://godoc.org/code.google.com/p/go-uuid/uuid#UUID)</span>
+<span class="pl-c">// Get slug from [UUID](https://godoc.org/github.com/pborman/uuid#UUID)</span>
 <span class="pl-smi">slug</span> <span class="pl-k">:=</span> slugid.<span class="pl-c1">Encode</span>(uuid)</pre></div>
 
 <h2>
-<a id="installing-command-line-tool" class="anchor" href="#installing-command-line-tool" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing command line tool</h2>
+<a id="installing-command-line-tool" class="anchor" href="#installing-command-line-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing command line tool</h2>
 
 <p><strong>Binary installation</strong></p>
 
@@ -119,11 +282,11 @@ of "nice" slugs, nice slugs provide therefore 121 bits entropy.</p>
 
 <p>Run:</p>
 
-<pre><code>go get github.com/taskcluster/slug-go/slug
+<pre><code>go get github.com/taskcluster/slugid-go/slug
 </code></pre>
 
 <h2>
-<a id="command-line-usage" class="anchor" href="#command-line-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Command line usage</h2>
+<a id="command-line-usage" class="anchor" href="#command-line-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Command line usage</h2>
 
 <pre><code>Usage:
   slug [-n|--nice|-r|--v4] [COUNT]
@@ -219,10 +382,10 @@ Exit Codes:
 </code></pre>
 
 <h2>
-<a id="rng-characteristics" class="anchor" href="#rng-characteristics" aria-hidden="true"><span class="octicon octicon-link"></span></a>RNG Characteristics</h2>
+<a id="rng-characteristics" class="anchor" href="#rng-characteristics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RNG Characteristics</h2>
 
 <p>UUID generation is performed by the
-<a href="https://godoc.org/code.google.com/p/go-uuid/uuid">code.google.com/p/go-uuid/uuid</a>
+<a href="https://godoc.org/github.com/pborman/uuid">github.com/pborman/uuid</a>
 library which in turn uses the
 <a href="https://golang.org/pkg/crypto/rand/#pkg-variables">crypto/rand</a> standard
 library for generating entropy. This library declares:</p>
@@ -239,13 +402,13 @@ uses the CryptGenRandom API. </p>
 <p>The slugid library inherits these RNG characteristics.</p>
 
 <h2>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
 
-<p>The <code>slugid</code> library is released on the MPL 2.0 license, see the <code>LICENSE</code>
-for complete license.</p>
+<p>The <code>slugid</code> library is released on the MPL 2.0 license, see file <code>LICENSE</code>
+for the complete license.</p>
 
 <h2>
-<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Testing</h2>
+<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing</h2>
 
 <div class="highlight highlight-source-shell"><pre>go <span class="pl-c1">test</span> ./...</pre></div>
 
