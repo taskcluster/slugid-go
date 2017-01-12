@@ -179,7 +179,7 @@ func main() {
 			}
 		}
 
-		if (x != nil && len(x.([]string)) == 1 && x.([]string)[0] == "-") || arguments["-"].(bool) {
+		if x != nil && len(x.([]string)) == 1 && x.([]string)[0] == "-" || arguments["-"].(bool) {
 			scanner := bufio.NewScanner(os.Stdin)
 			for scanner.Scan() {
 				decode(scanner.Text())
@@ -208,7 +208,7 @@ func main() {
 			}
 		}
 
-		if (x != nil && len(x.([]string)) == 1 && x.([]string)[0] == "-") || arguments["-"].(bool) {
+		if x != nil && len(x.([]string)) == 1 && x.([]string)[0] == "-" || arguments["-"].(bool) {
 			scanner := bufio.NewScanner(os.Stdin)
 			for scanner.Scan() {
 				encode(scanner.Text())

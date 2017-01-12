@@ -191,7 +191,7 @@ func spreadTest(t *testing.T, generator func() string, expected []string) {
 	actualRange := ""
 	for j := 0; j < 22; j++ {
 		actual[j] = make([]int, 0)
-		for a, _ := range k[j] {
+		for a := range k[j] {
 			actual[j] = append(actual[j], int(a))
 		}
 		sort.Ints(actual[j])

@@ -325,7 +325,7 @@ __Examples__
   2464a287-7f82-42ad-9b7d-1e26639d569a
   1c936d1b-104c-4abf-97b4-f586371e8742
 
-  $ slug 5 | slug decode | slug encode
+  $ slug 5 | slug decode - | slug encode -
   WLjW7XpJQ5ePycx6zWF8mw
   dEOJgGpARrWBm9HX9MPBSA
   fBIwjdHdRyGIk5WITyqxqA
