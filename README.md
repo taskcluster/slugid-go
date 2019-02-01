@@ -225,13 +225,13 @@ __Source installation__
 
 Requirements:
 
-  * go (golang) v1.4 or higher
+  * go (golang) v1.11 or higher
   * `${GOPATH}/bin` is in your path
 
 Run:
 
-```
-go get github.com/taskcluster/slugid-go/slug
+```bash
+go get github.com/taskcluster/slugid-go/cmd/slug
 ```
 
 Command line usage
