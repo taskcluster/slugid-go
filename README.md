@@ -1,7 +1,7 @@
+<img align="right" src="http://media.taskcluster.net/logo/logo-96x120.png" />
+
 slugid-go - Compressed UUIDs for go (golang)
 ============================================
-
-[![logo](https://media.taskcluster.net/logo/logo-96x120.png)](https://media.taskcluster.net/logo/logo-96x120.png)
 
 [![GoDoc](https://godoc.org/github.com/taskcluster/slugid-go?status.svg)](https://godoc.org/github.com/taskcluster/slugid-go)
 [![Build Status](https://travis-ci.org/taskcluster/slugid-go.svg?branch=master)](http://travis-ci.org/taskcluster/slugid-go)
